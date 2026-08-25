@@ -4,24 +4,41 @@ const crypto = require('crypto');
 const db = require('../config/db');
 const { authenticateAdmin } = require('../middleware/auth');
 const nodemailer = require('nodemailer');
+const dns = require('dns');
 
 const router = express.Router();
 
+// Custom IPv4 lookup to prevent ENETUNREACH on cloud environments like Render
+const ipv4Lookup = (hostname, options, callback) => {
+    return dns.lookup(hostname, { family: 4 }, callback);
+};
+
 // Configure Nodemailer
-const emailPort = parseInt(process.env.EMAIL_PORT) || 465;
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: emailPort,
-    secure: emailPort === 465, // true for 465, false for 587
-    family: 4, // Force IPv4 to prevent ENETUNREACH on Render
+const emailHost = process.env.EMAIL_HOST || 'smtp.gmail.com';
+const transporterConfig = {
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
     },
+    lookup: ipv4Lookup,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
     tls: {
         rejectUnauthorized: false
     }
-});
+};
+
+if (emailHost.includes('gmail')) {
+    transporterConfig.service = 'gmail';
+} else {
+    const emailPort = parseInt(process.env.EMAIL_PORT) || 587;
+    transporterConfig.host = emailHost;
+    transporterConfig.port = emailPort;
+    transporterConfig.secure = emailPort === 465;
+}
+
+const transporter = nodemailer.createTransport(transporterConfig);
 
 // Register for an event
 router.post('/register', async (req, res) => {
