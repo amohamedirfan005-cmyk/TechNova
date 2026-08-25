@@ -74,18 +74,17 @@ router.post('/register', async (req, res) => {
         
         await db.query('INSERT INTO event_registrations (user_id, event_id, participant_id, password_hash) VALUES (?, ?, ?, ?)', [userId, eventId, participantId, passwordHash]);
         
-        // Send email
-        try {
-            await transporter.sendMail({
-                from: '"TechNova" <noreply@technova.com>',
-                to: email,
-                subject: 'TechNova Event Registration',
-                text: `Hello ${fullName},\n\nYou have successfully registered for ${event}.\n\nYour Login Email: ${email}\nYour Participant ID: ${participantId}\nYour Temporary Password: ${tempPassword}\n\nPlease keep these credentials safe. You will need your Email and Temporary Password to log in when the event starts.\n\nBest regards,\nTechNova Team`
-            });
-            console.log(`Email sent to ${email} with password: ${tempPassword}`);
-        } catch (emailErr) {
-            console.error('Failed to send email:', emailErr);
-        }
+        // Send email asynchronously in background (non-blocking)
+        transporter.sendMail({
+            from: '"TechNova" <noreply@technova.com>',
+            to: email,
+            subject: 'TechNova Event Registration',
+            text: `Hello ${fullName},\n\nYou have successfully registered for ${event}.\n\nYour Login Email: ${email}\nYour Participant ID: ${participantId}\nYour Temporary Password: ${tempPassword}\n\nPlease keep these credentials safe. You will need your Email and Temporary Password to log in when the event starts.\n\nBest regards,\nTechNova Team`
+        }).then(() => {
+            console.log(`Email sent successfully to ${email}`);
+        }).catch((emailErr) => {
+            console.error('Failed to send email:', emailErr.message);
+        });
         
         res.json({ 
             message: 'Registration successful!',
