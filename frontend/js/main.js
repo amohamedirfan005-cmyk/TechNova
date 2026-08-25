@@ -65,7 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok) {
-                formMessage.textContent = 'Registration successful! Your participant credentials will be sent to your registered email.';
+                formMessage.innerHTML = `
+                    <div style="text-align: left; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <h4 style="color: #22c55e; margin: 0 0 0.5rem 0;">🎉 Registration Successful!</h4>
+                        <p style="margin: 0.3rem 0;"><strong>Participant ID:</strong> ${result.participantId}</p>
+                        <p style="margin: 0.3rem 0;"><strong>Password:</strong> ${result.tempPassword}</p>
+                        <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">Credentials have also been sent to your email.</p>
+                    </div>
+                `;
                 formMessage.className = 'success';
                 formMessage.classList.remove('hidden');
                 form.reset();
@@ -75,13 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 formMessage.classList.remove('hidden');
             }
         } catch (error) {
-            // Handle network error or backend not available
             console.error('Error:', error);
-            // Temporary mock success for UI testing if backend is down
-            formMessage.textContent = 'Registration submitted (Mock Mode). Credentials will be generated once backend is connected.';
-            formMessage.className = 'success';
+            formMessage.textContent = 'Connection error. Please try again or check your internet connection.';
+            formMessage.className = 'error';
             formMessage.classList.remove('hidden');
-            form.reset();
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Registration';

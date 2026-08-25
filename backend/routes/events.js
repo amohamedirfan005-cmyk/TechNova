@@ -70,7 +70,11 @@ router.post('/register', async (req, res) => {
             console.error('Failed to send email:', emailErr);
         }
         
-        res.json({ message: 'Registration successful!' });
+        res.json({ 
+            message: 'Registration successful!',
+            participantId,
+            tempPassword
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
