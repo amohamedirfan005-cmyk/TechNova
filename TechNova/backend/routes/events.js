@@ -83,7 +83,7 @@ router.post('/register', async (req, res) => {
         }).then(() => {
             console.log(`Email sent successfully to ${email}`);
         }).catch((emailErr) => {
-            console.error('Failed to send email:', emailErr.message);
+            console.log(`[Notice] Email to ${email} skipped (${emailErr.message}). Participant credentials generated & displayed on-screen.`);
         });
         
         res.json({ 
