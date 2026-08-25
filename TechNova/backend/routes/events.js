@@ -75,16 +75,20 @@ router.post('/register', async (req, res) => {
         await db.query('INSERT INTO event_registrations (user_id, event_id, participant_id, password_hash) VALUES (?, ?, ?, ?)', [userId, eventId, participantId, passwordHash]);
         
         // Send email asynchronously in background (non-blocking)
-        transporter.sendMail({
-            from: '"TechNova" <noreply@technova.com>',
-            to: email,
-            subject: 'TechNova Event Registration',
-            text: `Hello ${fullName},\n\nYou have successfully registered for ${event}.\n\nYour Login Email: ${email}\nYour Participant ID: ${participantId}\nYour Temporary Password: ${tempPassword}\n\nPlease keep these credentials safe. You will need your Email and Temporary Password to log in when the event starts.\n\nBest regards,\nTechNova Team`
-        }).then(() => {
-            console.log(`Email sent successfully to ${email}`);
-        }).catch((emailErr) => {
-            console.log(`[Notice] Email to ${email} skipped (${emailErr.message}). Participant credentials generated & displayed on-screen.`);
-        });
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+            transporter.sendMail({
+                from: `"TechNova" <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: 'TechNova Event Registration',
+                text: `Hello ${fullName},\n\nYou have successfully registered for ${event}.\n\nYour Login Email: ${email}\nYour Participant ID: ${participantId}\nYour Temporary Password: ${tempPassword}\n\nPlease keep these credentials safe. You will need your Email and Temporary Password to log in when the event starts.\n\nBest regards,\nTechNova Team`
+            }).then(() => {
+                console.log(`Email sent successfully to ${email}`);
+            }).catch((emailErr) => {
+                console.log(`[Notice] SMTP connect attempt finished. Credentials generated & displayed on-screen.`);
+            });
+        } else {
+            console.log(`[Notice] Email dispatch skipped (EMAIL_USER not configured). Credentials displayed on-screen.`);
+        }
         
         res.json({ 
             message: 'Registration successful!',
