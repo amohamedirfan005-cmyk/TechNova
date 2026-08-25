@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechNova - College Technical Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">TechNova</div>
+        <div class="nav-links">
+            <a href="#events">Events</a>
+            <a href="/participant/login.html" class="login-btn participant-btn">Participant Login</a>
+            <a href="/admin/login.html" class="login-btn admin-btn">Admin</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>TechNova 2026</h1>
+            <p>The Ultimate College Technical Symposium</p>
+            <p class="event-details">October 15-16, 2026 | Main Campus Auditorium</p>
+            <a href="#events" class="cta-btn">Register Now</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="events" class="events-section">
+            <h2>Available Events</h2>
+            <div class="events-grid">
+                <!-- Event 1 -->
+                <div class="event-card">
+                    <div class="event-icon">🎨</div>
+                    <h3>Poster Making</h3>
+                    <p>Showcase your creativity and design skills.</p>
+                    <button class="register-btn" data-event="Poster Making">Register</button>
+                </div>
+                <!-- Event 2 -->
+                <div class="event-card">
+                    <div class="event-icon">⚡</div>
+                    <h3>Speed Debugging</h3>
+                    <p>Find and fix the bugs before time runs out.</p>
+                    <button class="register-btn" data-event="Speed Debugging">Register</button>
+                </div>
+                <!-- Event 3 -->
+                <div class="event-card">
+                    <div class="event-icon">🖌️</div>
+                    <h3>UI/UX Redesign</h3>
+                    <p>Redesign existing interfaces to be more intuitive.</p>
+                    <button class="register-btn" data-event="UI/UX Redesign">Register</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Modal -->
+        <div id="registration-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Register for <span id="selected-event-name">Event</span></h2>
+                <form id="registration-form">
+                    <input type="hidden" id="event-input" name="event" required>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="college">College Name</label>
+                        <input type="text" id="college" name="college" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" title="10 digit mobile number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submit-reg-btn">Submit Registration</button>
+                    <p id="form-message" class="hidden"></p>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TechNova College Event Management System.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

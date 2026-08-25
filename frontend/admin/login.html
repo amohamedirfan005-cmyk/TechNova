@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Admin Login</h2>
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="submit-btn" id="login-btn">Login</button>
+                <p id="login-message" class="hidden"></p>
+            </form>
+            <a href="/" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+    <script src="../js/admin-login.js"></script>
+</body>
+</html>
