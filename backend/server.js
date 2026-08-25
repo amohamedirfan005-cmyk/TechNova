@@ -1,3 +1,4 @@
+// TechNova Server v1.0.2 - Updated DNS and Credentials
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
