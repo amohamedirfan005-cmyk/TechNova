@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participant Dashboard - TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="dashboard-container" style="padding: 2rem; max-width: 800px; margin: 0 auto; text-align: center; margin-top: 10vh;">
+        <div class="stat-card">
+            <h2 style="margin-bottom: 1rem; color: var(--primary);">Welcome Participant!</h2>
+            <p>Your event has started. The competition system will be available in the next version.</p>
+            <br>
+            <button onclick="localStorage.removeItem('participantToken'); window.location.href='/'" class="submit-btn" style="max-width: 200px; margin: 0 auto;">Logout</button>
+        </div>
+    </div>
+</body>
+</html>
