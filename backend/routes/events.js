@@ -40,6 +40,32 @@ if (emailHost.includes('gmail')) {
 
 const transporter = nodemailer.createTransport(transporterConfig);
 
+// Helper function to send email safely with a 3s timeout to prevent hanging or error logging on cloud hosts
+async function sendEventEmail(toEmail, subject, textContent) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+        console.log('[Email Service] Email skipped: EMAIL_USER / EMAIL_PASSWORD not set in environment.');
+        return;
+    }
+
+    try {
+        const sendPromise = transporter.sendMail({
+            from: `"TechNova" <${process.env.EMAIL_USER}>`,
+            to: toEmail,
+            subject: subject,
+            text: textContent
+        });
+
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('SMTP timeout')), 3000)
+        );
+
+        await Promise.race([sendPromise, timeoutPromise]);
+        console.log(`[Email Service] Email successfully sent to ${toEmail}`);
+    } catch (err) {
+        console.log(`[Email Service] Outbound SMTP disabled on host (${err.message}). Credentials delivered on-screen.`);
+    }
+}
+
 // Register for an event
 router.post('/register', async (req, res) => {
     const { fullName, college, email, mobile, dob, event } = req.body;
@@ -74,21 +100,12 @@ router.post('/register', async (req, res) => {
         
         await db.query('INSERT INTO event_registrations (user_id, event_id, participant_id, password_hash) VALUES (?, ?, ?, ?)', [userId, eventId, participantId, passwordHash]);
         
-        // Send email asynchronously in background (non-blocking)
-        if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
-            transporter.sendMail({
-                from: `"TechNova" <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: 'TechNova Event Registration',
-                text: `Hello ${fullName},\n\nYou have successfully registered for ${event}.\n\nYour Login Email: ${email}\nYour Participant ID: ${participantId}\nYour Temporary Password: ${tempPassword}\n\nPlease keep these credentials safe. You will need your Email and Temporary Password to log in when the event starts.\n\nBest regards,\nTechNova Team`
-            }).then(() => {
-                console.log(`Email sent successfully to ${email}`);
-            }).catch((emailErr) => {
-                console.log(`[Notice] SMTP connect attempt finished. Credentials generated & displayed on-screen.`);
-            });
-        } else {
-            console.log(`[Notice] Email dispatch skipped (EMAIL_USER not configured). Credentials displayed on-screen.`);
-        }
+        // Send email safely in background
+        sendEventEmail(
+            email,
+            'TechNova Event Registration',
+            `Hello ${fullName},\n\nYou have successfully registered for ${event}.\n\nYour Login Email: ${email}\nYour Participant ID: ${participantId}\nYour Temporary Password: ${tempPassword}\n\nPlease keep these credentials safe. You will need your Email and Temporary Password to log in when the event starts.\n\nBest regards,\nTechNova Team`
+        );
         
         res.json({ 
             message: 'Registration successful!',
