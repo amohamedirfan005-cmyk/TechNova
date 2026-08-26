@@ -16,7 +16,8 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, admin.password_hash);
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
         
-        const token = jwt.sign({ id: admin.id, role: 'ADMIN' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const jwtSecret = process.env.JWT_SECRET || 'technova_secret_key_2026';
+        const token = jwt.sign({ id: admin.id, role: 'ADMIN' }, jwtSecret, { expiresIn: '1d' });
         res.json({ token, message: 'Logged in successfully' });
     } catch (err) {
         console.error(err);

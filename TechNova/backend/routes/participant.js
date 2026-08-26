@@ -30,7 +30,8 @@ router.post('/login', async (req, res) => {
             return res.status(403).json({ message: 'Events are not started yet.' });
         }
 
-        const token = jwt.sign({ participantId: row.participant_id, eventId: row.event_id, role: 'PARTICIPANT' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const jwtSecret = process.env.JWT_SECRET || 'technova_secret_key_2026';
+        const token = jwt.sign({ participantId: row.participant_id, eventId: row.event_id, role: 'PARTICIPANT' }, jwtSecret, { expiresIn: '1d' });
         res.json({ token, message: 'Logged in successfully', eventName: row.event_name });
     } catch (err) {
         console.error(err);

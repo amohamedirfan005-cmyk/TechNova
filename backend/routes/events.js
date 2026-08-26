@@ -15,7 +15,11 @@ const ipv4Lookup = (hostname, options, callback) => {
 
 // Configure Nodemailer
 const emailHost = process.env.EMAIL_HOST || 'smtp.gmail.com';
+const emailPort = parseInt(process.env.EMAIL_PORT) || 587;
 const transporterConfig = {
+    host: emailHost,
+    port: emailPort,
+    secure: emailPort === 465,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
@@ -28,15 +32,6 @@ const transporterConfig = {
         rejectUnauthorized: false
     }
 };
-
-if (emailHost.includes('gmail')) {
-    transporterConfig.service = 'gmail';
-} else {
-    const emailPort = parseInt(process.env.EMAIL_PORT) || 587;
-    transporterConfig.host = emailHost;
-    transporterConfig.port = emailPort;
-    transporterConfig.secure = emailPort === 465;
-}
 
 const transporter = nodemailer.createTransport(transporterConfig);
 

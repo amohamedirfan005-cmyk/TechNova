@@ -6,7 +6,8 @@ const authenticateAdmin = (req, res, next) => {
     
     if (!token) return res.status(401).json({ message: 'Access denied' });
     
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    const jwtSecret = process.env.JWT_SECRET || 'technova_secret_key_2026';
+    jwt.verify(token, jwtSecret, (err, user) => {
         if (err || user.role !== 'ADMIN') return res.status(403).json({ message: 'Forbidden' });
         req.user = user;
         next();
