@@ -25,14 +25,21 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, row.password_hash);
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials.' });
 
-        // Check if event is started
-        if (row.event_status !== 'Started') {
-            return res.status(403).json({ message: 'Events are not started yet.' });
-        }
-
         const jwtSecret = process.env.JWT_SECRET || 'technova_secret_key_2026';
-        const token = jwt.sign({ participantId: row.participant_id, eventId: row.event_id, role: 'PARTICIPANT' }, jwtSecret, { expiresIn: '1d' });
-        res.json({ token, message: 'Logged in successfully', eventName: row.event_name });
+        const token = jwt.sign({ 
+            participantId: row.participant_id, 
+            eventId: row.event_id, 
+            role: 'PARTICIPANT',
+            eventName: row.event_name,
+            eventStatus: row.event_status 
+        }, jwtSecret, { expiresIn: '1d' });
+
+        res.json({ 
+            token, 
+            message: 'Logged in successfully', 
+            eventName: row.event_name,
+            eventStatus: row.event_status 
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'DB Err' });

@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (res.ok) {
                 localStorage.setItem('participantToken', data.token);
-                // Redirect to a placeholder participant dashboard for now
+                localStorage.setItem('participantEventName', data.eventName || '');
+                localStorage.setItem('participantEventStatus', data.eventStatus || '');
                 window.location.href = '/participant/dashboard.html';
             } else {
                 msg.textContent = data.message || 'Login failed';
