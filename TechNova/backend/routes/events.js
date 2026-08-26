@@ -37,6 +37,35 @@ const transporter = nodemailer.createTransport(transporterConfig);
 
 // Helper function to send email safely with a 3s timeout to prevent hanging or error logging on cloud hosts
 async function sendEventEmail(toEmail, subject, textContent) {
+    // 1. If BREVO_API_KEY is configured, send via Brevo HTTPS API (never blocked on Render)
+    if (process.env.BREVO_API_KEY) {
+        try {
+            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': process.env.BREVO_API_KEY,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: 'TechNova', email: process.env.EMAIL_USER || 'noreply@technova.com' },
+                    to: [{ email: toEmail }],
+                    subject: subject,
+                    textContent: textContent
+                })
+            });
+            if (response.ok) {
+                console.log(`[Email Service] Brevo API email successfully sent to ${toEmail}`);
+                return;
+            } else {
+                const errText = await response.text();
+                console.log(`[Email Service] Brevo API returned error: ${errText}`);
+            }
+        } catch (apiErr) {
+            console.log(`[Email Service] Brevo API request failed: ${apiErr.message}`);
+        }
+    }
+
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
         console.log('[Email Service] Email skipped: EMAIL_USER / EMAIL_PASSWORD not set in environment.');
         return;
